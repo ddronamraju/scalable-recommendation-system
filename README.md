@@ -1,33 +1,128 @@
-# scalable-recommendation-system
-A two-stage video recommendation system combining Annoy for fast candidate generation and XGBoost for ranking user engagement. Includes a feedback-driven retraining loop and modular FastAPI microservices, optimized for scalability and efficient execution on a personal laptop.
+# 🎬 Video Recommendation System — From Prototype to Production
 
-## 🚀 Scaling This Project to Production
-
-While this project runs efficiently on a personal laptop, the same architecture can be scaled to production environments with a few key upgrades:
-
-- **Candidate Generation → Distributed ANN:**  
-  Replace the local Annoy index with a **vector database** (e.g., FAISS, Milvus, Pinecone) that supports sharding, replication, and caching for sub-50 ms retrieval latency.
-
-- **Ranking → Managed Model Serving:**  
-  Serve the XGBoost ranker via **MLflow**, **Vertex AI**, or **SageMaker** endpoints.  
-  Fetch real-time features from a **Feature Store** (Feast, Redis) to maintain offline/online parity.
-
-- **Feedback → Streaming Pipeline:**  
-  Use **Kafka**, **Flink**, or **Spark Streaming** to collect user feedback in real time and trigger automatic retraining on fresh interaction data.
-
-- **Deployment → Containers & Orchestration:**  
-  Containerize each microservice with **Docker** and deploy to **Kubernetes**, enabling autoscaling and independent resource management per service.
-
-- **Observability → Metrics & Tracing:**  
-  Integrate **OpenTelemetry**, **Prometheus**, and **Grafana** dashboards for end-to-end latency (p95), error rates, and cache hit ratios.
-
-- **Experimentation → A/B Testing & Exploration:**  
-  Implement an **A/B testing** framework and use **Thompson Sampling** or ε-greedy policies to balance recommendation quality and novelty.
-
-- **Governance → Registry, CI/CD & Compliance:**  
-  Track model versions in a **Model Registry**, automate builds with **GitHub Actions**, and apply **data retention & PII masking** policies for compliance.
+A modular, end-to-end **Recommendation System** designed to evolve from a laptop-scale prototype to a **cloud-scale real-time recommender**.  
+Built with **Python, FastAPI, Annoy/Faiss, XGBoost, MLflow, and Docker**, this project demonstrates the full lifecycle — data simulation → modeling → deployment → scaling.
 
 ---
 
-> 💡 *This section serves as a roadmap for turning the local prototype into a cloud-ready, scalable recommendation system that aligns with real-world ML engineering practices.*
+## 🧠 Project Overview
 
+This system mimics a YouTube-style recommendation workflow, consisting of:
+1. **Candidate Generation** (wide recall)
+2. **Ranking Model** (precision scoring)
+3. **Feedback Loop + Retraining**
+4. **API Serving + Caching**
+5. **Load Testing + Real-Time Scaling**
+
+The design emphasizes **clarity, modularity, and production readiness** — suitable for inclusion in an engineering portfolio or interview presentation.
+
+---
+
+## 🗂️ Repository Structure
+
+```
+video-recommender/
+│
+├── services/           # Candidate, ranking, feedback, and API services
+├── data/               # Interactions, features, and feedback
+├── model_repo/         # Versioned trained models
+├── configs/            # Model + environment configs
+├── scripts/            # Retraining and feature update jobs
+├── docker/             # Docker and Compose files
+├── tests/              # PyTest-based validation suite
+└── notebooks/          # Jupyter exploration & experimentation
+```
+
+---
+
+## 📖 Documentation Index (GitHub Wiki)
+
+| Step | Page | Description |
+|------|------|-------------|
+| 🏠 | [Home](../../wiki/Home) | Project intro, architecture, and milestones |
+| 1️⃣ | [Data Simulation](../../wiki/Step1_DataSimulation) | Generate synthetic user–video interactions |
+| 2️⃣ | [Candidate Generation](../../wiki/Step2_CandidateGeneration) | ANN-based retrieval using Annoy/Faiss |
+| 3️⃣ | [Ranking Model](../../wiki/Step3_RankingModel) | XGBoost-based ranking and evaluation |
+| 4️⃣ | [End-to-End Flow](../../wiki/Step4_EndToEnd) | Pipeline orchestration from input to output |
+| 5️⃣ | [Feedback Loop](../../wiki/Step5_FeedbackLoop) | Logging user behavior and retraining strategy |
+| 6️⃣ | [APIs](../../wiki/Step6_APIs) | FastAPI microservice exposing recommendations |
+| 7️⃣ | [Project Structure](../../wiki/Step7_ProjectStructure) | Modular repo layout and coding standards |
+| 8️⃣ | [Tooling](../../wiki/Step8_Tooling) | Docker, MLflow, Dask, CI/CD setup |
+| 9️⃣ | [Load Testing](../../wiki/Step9_LoadTesting) | Benchmarking with Locust and Prometheus |
+| 🔟 | [Scaling to Real-Time Systems](../../wiki/Step10_PortfolioPolish) | Enterprise-grade architecture and scaling roadmap |
+
+---
+
+## ⚙️ Quickstart
+
+### 1. Clone the Repo
+```bash
+git clone https://github.com/<your-username>/video-recommender.git
+cd video-recommender
+```
+
+### 2. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Run the API
+```bash
+uvicorn services.api_service:app --reload --port 8000
+```
+
+### 4. Try the Endpoint
+```bash
+curl -X POST "http://127.0.0.1:8000/recommend"      -H "Content-Type: application/json"      -d '{"user_id": 42, "top_n": 5}'
+```
+
+---
+
+## 🧰 Tooling Highlights
+| Tool | Purpose |
+|------|----------|
+| **FastAPI** | Serve real-time recommendations |
+| **Annoy / Faiss** | Vector search for candidate retrieval |
+| **XGBoost / LightGBM** | Ranking models |
+| **Docker + Compose** | Containerization and orchestration |
+| **Dask** | Parallel feature computation |
+| **MLflow** | Experiment tracking and model registry |
+| **Prometheus + Grafana** | Monitoring and observability |
+| **Airflow / Kubeflow** | Automated retraining pipelines |
+
+---
+
+## 📈 Key Learnings
+- Designed a two-stage recommendation system (recall + precision)
+- Implemented retraining and feedback logging loops
+- Deployed a FastAPI inference service with Redis caching
+- Conducted load testing (Locust + Prometheus)
+- Scaled the design to handle **1K+ RPS** with cloud-native components
+
+---
+
+## 🌐 Live Demo (Optional)
+Once deployed:
+```
+https://<your-domain-or-load-balancer>/docs
+```
+Interactive API documentation available via Swagger UI.
+
+---
+
+## 🧩 Author
+**Divya Dronamraju**  
+Generative AI & ML Engineer  
+Georgia Tech MS Analytics | Infosys  
+
+---
+
+## 🏁 What’s Next
+- Integrate **deep two-tower models** for embeddings  
+- Add **contextual bandits** for personalization feedback  
+- Extend **multi-objective ranking** (CTR + diversity)  
+- Deploy to **Azure / GCP / AWS** with autoscaling  
+
+---
+
+> 📘 *“From notebook to production — this project shows the real engineering behind machine learning systems.”*
